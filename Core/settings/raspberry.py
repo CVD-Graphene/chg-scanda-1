@@ -66,7 +66,7 @@ VALVES_CONFIGURATION = [
         # 'ADDRESS': 0,  # RRG ADDRESS FOR SPI (from 0 to 7: 000, 001, ..., 111)
         # 'DAC_ADDRESS': 0,  # RRG ADDRESS FOR SPI DAC [SET VALUE] (from 0 to 7: 000, 001, ..., 111)
         'VAKUMETR_ADDRESS': 0,  # VAKUMETR ADDRESS FOR READING PRESSURE IN BALLOON
-        "INSTRUMENT_NUMBER": 1,  # rrg modbus instrument number
+        "INSTRUMENT_NUMBER": 3,  # rrg modbus instrument number
     },
     {
         'PORT': 24, "NAME": "CH_4", "IS_GAS": True,
@@ -74,7 +74,7 @@ VALVES_CONFIGURATION = [
         # 'ADDRESS': 1, 'DAC_ADDRESS': 1,
         'MAX_SCCM': 3.6,
         'VAKUMETR_ADDRESS': 1,  # VAKUMETR ADDRESS FOR READING PRESSURE IN BALLOON
-        "INSTRUMENT_NUMBER": 3,  # rrg modbus instrument number
+        "INSTRUMENT_NUMBER": 1,  # rrg modbus instrument number
     },
     {
         'PORT': 23, "NAME": "H_2", "IS_GAS": True,
