@@ -31,13 +31,13 @@ BH_RRG_CONTROLLER_BAUDRATE = 38400
 BH_RRG_CONTROLLER_MAX_RRG_VOLTAGE = 5.0
 
 AIR_VALVE_CONFIGURATION = {
-    'PORT': 17, "NAME": "Air",
+    'PORT': 25, "NAME": "Air",
 }
 AIR_VALVE_NAME = AIR_VALVE_CONFIGURATION['NAME']
 
 PUMP_CONFIGURATION = {
-    'MANAGE_PORT': 1,  # порт управления (вкл/выкл)
-    'VALVE_PORT': 18,  # открыть/закрыть клапан перед насосом
+    'MANAGE_PORT': 3,  # порт управления (вкл/выкл)
+    'VALVE_PORT': 2,  # открыть/закрыть клапан перед насосом. needle valve has adress gpio12
     "NAME": 'Pump',
 }
 
@@ -53,34 +53,36 @@ VAKUMETR_SPI_READ_CHANNEL = 0
 VAKUMETR_SPI_SPEED = 20000
 VAKUMETR_SPI_READ_DEVICE = 0
 
-DIGITAL_FUSE_PORTS = [5, 22, 6, 27]
+DIGITAL_FUSE_PORTS = [5, 22, 6, ]
 
 VALVES_CONFIGURATION = [
     {
         "NAME": "Ar",
-        'PORT': 3,  # GPIO PORT FOR RELE
+        'PORT': 18,  # GPIO PORT FOR RELE
         "IS_GAS": True,
-        "MAX_SCCM": 200.0,  # NOT NECESSARY, IF NOT PROVIDED, WILL BE USED `MAX_DEFAULT_SCCM_VALUE`
+        "MAX_SCCM": 90.0,  # NOT NECESSARY, IF NOT PROVIDED, WILL BE USED `MAX_DEFAULT_SCCM_VALUE`
         # 'CONTROLLER_VOLTAGE_RATIO': 1,  # BH CONTROLLER VOLTAGE FUNCTION ('a' from 'a*x+b') (0, +inf)
         # 'CONTROLLER_VOLTAGE_SHIFT': 0,  # BH CONTROLLER VOLTAGE FUNCTION ('b' from 'a*x+b') (-inf, +inf)
         # 'ADDRESS': 0,  # RRG ADDRESS FOR SPI (from 0 to 7: 000, 001, ..., 111)
         # 'DAC_ADDRESS': 0,  # RRG ADDRESS FOR SPI DAC [SET VALUE] (from 0 to 7: 000, 001, ..., 111)
-        'VAKUMETR_ADDRESS': 1,  # VAKUMETR ADDRESS FOR READING PRESSURE IN BALLOON
+        'VAKUMETR_ADDRESS': 0,  # VAKUMETR ADDRESS FOR READING PRESSURE IN BALLOON
         "INSTRUMENT_NUMBER": 1,  # rrg modbus instrument number
     },
     {
         'PORT': 24, "NAME": "CH_4", "IS_GAS": True,
         # 'CONTROLLER_VOLTAGE_RATIO': 1, 'CONTROLLER_VOLTAGE_SHIFT': 0,
         # 'ADDRESS': 1, 'DAC_ADDRESS': 1,
-        'VAKUMETR_ADDRESS': 2,  # VAKUMETR ADDRESS FOR READING PRESSURE IN BALLOON
-        "INSTRUMENT_NUMBER": 2,  # rrg modbus instrument number
+        'MAX_SCCM': 3.6,
+        'VAKUMETR_ADDRESS': 1,  # VAKUMETR ADDRESS FOR READING PRESSURE IN BALLOON
+        "INSTRUMENT_NUMBER": 3,  # rrg modbus instrument number
     },
     {
         'PORT': 23, "NAME": "H_2", "IS_GAS": True,
         # 'CONTROLLER_VOLTAGE_RATIO': 1, 'CONTROLLER_VOLTAGE_SHIFT': 0,
         # 'ADDRESS': 4, 'DAC_ADDRESS': 7,
-        "VAKUMETR_ADDRESS": 3,  # VAKUMETR ADDRESS FOR READING PRESSURE IN BALLOON
-        "INSTRUMENT_NUMBER": 3,  # rrg modbus instrument number
+        'MAX_SCCM': 36,
+        "VAKUMETR_ADDRESS": 2,  # VAKUMETR ADDRESS FOR READING PRESSURE IN BALLOON
+        "INSTRUMENT_NUMBER": 2,  # rrg modbus instrument number
     },
 ]
 
