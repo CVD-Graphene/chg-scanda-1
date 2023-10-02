@@ -1,0 +1,6 @@
+[submodule "coregraphene"]
+	path = coregraphene
+	url = https://github.com/CVD-Graphene/coregraphene.git
+[submodule "grapheneqtui"]
+	path = grapheneqtui
+	url = https://github.com/CVD-Graphene/grapheneqtui.git
