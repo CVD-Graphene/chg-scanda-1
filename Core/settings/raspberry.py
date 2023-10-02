@@ -65,21 +65,21 @@ VALVES_CONFIGURATION = [
         # 'CONTROLLER_VOLTAGE_SHIFT': 0,  # BH CONTROLLER VOLTAGE FUNCTION ('b' from 'a*x+b') (-inf, +inf)
         # 'ADDRESS': 0,  # RRG ADDRESS FOR SPI (from 0 to 7: 000, 001, ..., 111)
         # 'DAC_ADDRESS': 0,  # RRG ADDRESS FOR SPI DAC [SET VALUE] (from 0 to 7: 000, 001, ..., 111)
-        'VAKUMETR_ADDRESS': 0,  # VAKUMETR ADDRESS FOR READING PRESSURE IN BALLOON
-        "INSTRUMENT_NUMBER": 2,  # rrg modbus instrument number
+        'VAKUMETR_ADDRESS': 1,  # VAKUMETR ADDRESS FOR READING PRESSURE IN BALLOON
+        "INSTRUMENT_NUMBER": 1,  # rrg modbus instrument number
     },
     {
         'PORT': 24, "NAME": "CH_4", "IS_GAS": True,
         # 'CONTROLLER_VOLTAGE_RATIO': 1, 'CONTROLLER_VOLTAGE_SHIFT': 0,
         # 'ADDRESS': 1, 'DAC_ADDRESS': 1,
-        'VAKUMETR_ADDRESS': 1,  # VAKUMETR ADDRESS FOR READING PRESSURE IN BALLOON
-        "INSTRUMENT_NUMBER": 1,  # rrg modbus instrument number
+        'VAKUMETR_ADDRESS': 2,  # VAKUMETR ADDRESS FOR READING PRESSURE IN BALLOON
+        "INSTRUMENT_NUMBER": 2,  # rrg modbus instrument number
     },
     {
         'PORT': 23, "NAME": "H_2", "IS_GAS": True,
         # 'CONTROLLER_VOLTAGE_RATIO': 1, 'CONTROLLER_VOLTAGE_SHIFT': 0,
         # 'ADDRESS': 4, 'DAC_ADDRESS': 7,
-        "VAKUMETR_ADDRESS": 2,  # VAKUMETR ADDRESS FOR READING PRESSURE IN BALLOON
+        "VAKUMETR_ADDRESS": 3,  # VAKUMETR ADDRESS FOR READING PRESSURE IN BALLOON
         "INSTRUMENT_NUMBER": 3,  # rrg modbus instrument number
     },
 ]
