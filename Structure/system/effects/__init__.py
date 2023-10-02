@@ -8,6 +8,7 @@ class ChangeAirValveStateEffect(SystemEffect):
 
 class ChangeGasValveStateEffect(ManyDeviceSystemEffect):
     def _call_function(self, is_open, device_num=None):
+        print('{{{ ChangeGasValveStateEffect }}}', is_open, device_num)
         return self._system._valves[device_num].set_is_open_state(is_open)
 
 
@@ -25,16 +26,19 @@ class ChangePumpManageStateEffect(SystemEffect):
 # ======== RRG
 class SetTargetRrgSccmEffect(ManyDeviceSystemEffect):
     def _call_function(self, sccm, device_num):
+        print('{{{ SetTargetRrgSccmEffect }}}', sccm, device_num)
         return self._system.rrgs_controller.set_target_sccm(sccm, device_num)
 
 
 class FullCloseRrgEffect(ManyDeviceSystemEffect):
     def _call_function(self, device_num):
+        # print('{{{ FullCloseRrgEffect', device_num)
         return self._system.rrgs_controller.full_rrg_close(device_num)
 
 
 class FullOpenRrgEffect(ManyDeviceSystemEffect):
     def _call_function(self, device_num):
+        # print('{{{ FullOpenRrgEffect', device_num)
         return self._system.rrgs_controller.full_rrg_open(device_num)
 
 
