@@ -80,7 +80,7 @@ class AppSystem(BaseSystem):
     }
 
     _ports_attr_names = {
-        'vakumetr': 'vakumetr_port',
+        # 'vakumetr': 'vakumetr_port',
         'rrg': 'rrg_port',
         # 'current_source': 'current_source_port',
         'pyrometer': 'pyrometer_temperature_port',
@@ -107,7 +107,7 @@ class AppSystem(BaseSystem):
         self._controllers_check_classes = {
             # 'throttle': BackPressureValveController,
             'rrg': RrgModbusController,
-            'vakumetr': AccurateVakumetrController,
+            # 'vakumetr': AccurateVakumetrController,
             'pyrometer': PyrometerTemperatureController,
             # 'current_source': CurrentSourceController,
         }
@@ -129,7 +129,7 @@ class AppSystem(BaseSystem):
             "pyrometer", self.pyrometer_temperature_port,
             # 'throttle', self.back_pressure_valve_port,
         )
-        assert self.vakumetr_port is not None
+        # assert self.vakumetr_port is not None
         assert self.rrg_port is not None
         # assert self.current_source_port is not None
         assert self.pyrometer_temperature_port is not None
@@ -146,11 +146,11 @@ class AppSystem(BaseSystem):
         gc.collect()
 
     def _init_controllers(self):
-        self.accurate_vakumetr_controller = AccurateVakumetrController(
-            get_potential_port=self.get_potential_controller_port_1,
-            port=self.vakumetr_port,
-            **self._default_controllers_kwargs.get('vakumetr'),
-        )
+        # self.accurate_vakumetr_controller = AccurateVakumetrController(
+        #     get_potential_port=self.get_potential_controller_port_1,
+        #     port=self.vakumetr_port,
+        #     **self._default_controllers_kwargs.get('vakumetr'),
+        # )
         self.pyrometer_temperature_controller = PyrometerTemperatureController(
             get_potential_port=self.get_potential_controller_port_1,
             port=self.pyrometer_temperature_port,
@@ -217,7 +217,7 @@ class AppSystem(BaseSystem):
         # )
 
         self._controllers: list[AbstractController] = [
-            self.accurate_vakumetr_controller,
+            # self.accurate_vakumetr_controller,
             self.air_valve_controller,
             self.pyrometer_temperature_controller,
             self.rrgs_controller,
@@ -310,9 +310,9 @@ class AppSystem(BaseSystem):
 
         # ===== Accurate vakumetr ===== #
         self.accurate_vakumetr_effect = SingleAnswerSystemEffect(system=self)
-        self.accurate_vakumetr_controller.actual_pressure_effect. \
-            connect(self.accurate_vakumetr_effect)
-        self.accurate_vakumetr_effect.connect(self._on_get_accurate_vakumetr_value)
+        # self.accurate_vakumetr_controller.actual_pressure_effect. \
+        #     connect(self.accurate_vakumetr_effect)
+        # self.accurate_vakumetr_effect.connect(self._on_get_accurate_vakumetr_value)
 
         #########################
 
