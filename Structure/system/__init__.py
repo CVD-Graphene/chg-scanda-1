@@ -200,12 +200,12 @@ class AppSystem(BaseSystem):
         #     write_device=settings.RRG_SPI_WRITE_DEVICE,
         # )
 
-        self.gases_pressure_controller = VakumetrAdcController(
-            config=VALVES_CONFIGURATION,
-            channel=settings.VAKUMETR_SPI_READ_CHANNEL,
-            speed=settings.VAKUMETR_SPI_SPEED,
-            device=settings.VAKUMETR_SPI_READ_DEVICE,
-        )
+        # self.gases_pressure_controller = VakumetrAdcController(
+        #     config=VALVES_CONFIGURATION,
+        #     channel=settings.VAKUMETR_SPI_READ_CHANNEL,
+        #     speed=settings.VAKUMETR_SPI_SPEED,
+        #     device=settings.VAKUMETR_SPI_READ_DEVICE,
+        # )
 
         self._digital_fuses = {}
         for i, port in enumerate(settings.DIGITAL_FUSE_PORTS):
@@ -222,7 +222,7 @@ class AppSystem(BaseSystem):
             self.pyrometer_temperature_controller,
             self.rrgs_controller,
             # self.bh_rrg_controller,
-            self.gases_pressure_controller,
+            # self.gases_pressure_controller,
             # self.current_source_controller,
 
             self.pump_valve_controller,
@@ -258,8 +258,8 @@ class AppSystem(BaseSystem):
 
         # ===== Vakumetr gases ==== #
         self.current_gas_balloon_pressure_effect = SingleAnswerSystemEffect(system=self)
-        self.gases_pressure_controller.get_current_pressure_action.connect(
-            self.current_gas_balloon_pressure_effect)
+        # self.gases_pressure_controller.get_current_pressure_action.connect(
+        #     self.current_gas_balloon_pressure_effect)
 
         # ===== Pyrometer ===== #
         self.current_temperature_effect = SingleAnswerSystemEffect(system=self)
