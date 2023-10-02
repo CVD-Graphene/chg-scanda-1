@@ -123,7 +123,7 @@ class AppSystem(BaseSystem):
 
         print(
             "|> FOUND PORTS:",
-            "vakumetr:", self.vakumetr_port,
+            # "vakumetr:", self.vakumetr_port,
             "rrg:", self.rrg_port,
             # 'current_source:', self.current_source_port,
             "pyrometer", self.pyrometer_temperature_port,
@@ -152,7 +152,8 @@ class AppSystem(BaseSystem):
         #     **self._default_controllers_kwargs.get('vakumetr'),
         # )
         self.accurate_vakumetr_controller = BhVakumetrController(
-            port=self.vakumetr_port,
+            # port=self.vakumetr_port,
+            **self._default_controllers_kwargs.get('bh_rrg'),
             get_potential_port=self.get_potential_controller_port_1,
         )
         self.pyrometer_temperature_controller = PyrometerTemperatureController(

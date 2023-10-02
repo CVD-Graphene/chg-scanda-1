@@ -60,7 +60,7 @@ VALVES_CONFIGURATION = [
         "NAME": "Ar",
         'PORT': 18,  # GPIO PORT FOR RELE
         "IS_GAS": True,
-        "MAX_SCCM": 90.0,  # NOT NECESSARY, IF NOT PROVIDED, WILL BE USED `MAX_DEFAULT_SCCM_VALUE`
+        "MAX_SCCM": 2175.0,  # NOT NECESSARY, IF NOT PROVIDED, WILL BE USED `MAX_DEFAULT_SCCM_VALUE`
         # 'CONTROLLER_VOLTAGE_RATIO': 1,  # BH CONTROLLER VOLTAGE FUNCTION ('a' from 'a*x+b') (0, +inf)
         # 'CONTROLLER_VOLTAGE_SHIFT': 0,  # BH CONTROLLER VOLTAGE FUNCTION ('b' from 'a*x+b') (-inf, +inf)
         # 'ADDRESS': 0,  # RRG ADDRESS FOR SPI (from 0 to 7: 000, 001, ..., 111)
@@ -72,7 +72,7 @@ VALVES_CONFIGURATION = [
         'PORT': 24, "NAME": "CH_4", "IS_GAS": True,
         # 'CONTROLLER_VOLTAGE_RATIO': 1, 'CONTROLLER_VOLTAGE_SHIFT': 0,
         # 'ADDRESS': 1, 'DAC_ADDRESS': 1,
-        'MAX_SCCM': 3.6,
+        'MAX_SCCM': 43.2,
         'VAKUMETR_ADDRESS': 1,  # VAKUMETR ADDRESS FOR READING PRESSURE IN BALLOON
         "INSTRUMENT_NUMBER": 1,  # rrg modbus instrument number
     },
@@ -80,7 +80,7 @@ VALVES_CONFIGURATION = [
         'PORT': 23, "NAME": "H_2", "IS_GAS": True,
         # 'CONTROLLER_VOLTAGE_RATIO': 1, 'CONTROLLER_VOLTAGE_SHIFT': 0,
         # 'ADDRESS': 4, 'DAC_ADDRESS': 7,
-        'MAX_SCCM': 36,
+        'MAX_SCCM': 606.0,
         "VAKUMETR_ADDRESS": 2,  # VAKUMETR ADDRESS FOR READING PRESSURE IN BALLOON
         "INSTRUMENT_NUMBER": 2,  # rrg modbus instrument number
     },
