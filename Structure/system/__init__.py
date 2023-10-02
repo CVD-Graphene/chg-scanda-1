@@ -33,7 +33,7 @@ from coregraphene.components.controllers import (
     SeveralRrgAdcDacController,
     DigitalFuseController,
     BackPressureValveController,
-    VakumetrAdcController, BhRrgController, SeveralRrgModbusController, RrgModbusController,
+    VakumetrAdcController, BhRrgController, SeveralRrgModbusController, RrgModbusController, BhVakumetrController,
 )
 from coregraphene.system import BaseSystem
 from coregraphene.conf import settings
@@ -151,6 +151,10 @@ class AppSystem(BaseSystem):
         #     port=self.vakumetr_port,
         #     **self._default_controllers_kwargs.get('vakumetr'),
         # )
+        self.accurate_vakumetr_controller = BhVakumetrController(
+            port=self.vakumetr_port,
+            get_potential_port=self.get_potential_controller_port_1,
+        )
         self.pyrometer_temperature_controller = PyrometerTemperatureController(
             get_potential_port=self.get_potential_controller_port_1,
             port=self.pyrometer_temperature_port,
@@ -217,7 +221,7 @@ class AppSystem(BaseSystem):
         # )
 
         self._controllers: list[AbstractController] = [
-            # self.accurate_vakumetr_controller,
+            self.accurate_vakumetr_controller,
             self.air_valve_controller,
             self.pyrometer_temperature_controller,
             self.rrgs_controller,
@@ -313,6 +317,8 @@ class AppSystem(BaseSystem):
         # self.accurate_vakumetr_controller.actual_pressure_effect. \
         #     connect(self.accurate_vakumetr_effect)
         # self.accurate_vakumetr_effect.connect(self._on_get_accurate_vakumetr_value)
+        self.accurate_vakumetr_controller.get_current_pressure_effect. \
+            connect(self.accurate_vakumetr_effect)
 
         #########################
 
