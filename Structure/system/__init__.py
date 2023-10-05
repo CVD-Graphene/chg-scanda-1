@@ -22,7 +22,7 @@ from .effects import (
     ChangePumpManageStateEffect,
     SetTargetTemperatureSystemEffect,
     SetIsTemperatureRegulationActiveEffect,
-    SetTemperaturePidSpeedSystemEffect,
+    SetTemperaturePidSpeedSystemEffect, ChangeTmpPumpStateEffect,
 )
 from coregraphene.components.controllers import (
     AbstractController,
@@ -188,6 +188,7 @@ class AppSystem(BaseSystem):
         #     port=self.back_pressure_valve_port,
         #     **self._default_controllers_kwargs.get('throttle'),
         # )
+        self.small_tmp_pump = ValveController(port=12)
         ##############
 
         self._valves = {}
@@ -226,6 +227,7 @@ class AppSystem(BaseSystem):
             self.air_valve_controller,
             self.pyrometer_temperature_controller,
             self.rrgs_controller,
+            self.small_tmp_pump,
             # self.bh_rrg_controller,
             # self.gases_pressure_controller,
             # self.current_source_controller,
@@ -243,6 +245,9 @@ class AppSystem(BaseSystem):
 
     def _init_actions(self):
         super()._init_actions()
+
+        # ===== TMP PUMP ======== #
+        self.change_tmp_pump_opened = ChangeTmpPumpStateEffect(system=self)
 
         # ===== Valves ======== #
         self.change_gas_valve_opened = ChangeGasValveStateEffect(system=self)
@@ -428,18 +433,6 @@ class AppSystem(BaseSystem):
 
     def log_state(self):
         pass
-        # for controller in self._controllers:
-        #     value = controller.get_value()
-
-    # @BaseSystem.action
-    # def change_valve_state(self, gas):
-    #     # t = Thread(target=self.long_function)
-    #     # t.start()
-    #     # return 1
-    #     valve = self._valves.get(gas, None)
-    #     if valve is None:
-    #         return False
-    #     return valve.change_state()
 
     def _change_valve_state(self, valve, name="-"):
         new_state = valve.change_state()
@@ -453,6 +446,11 @@ class AppSystem(BaseSystem):
             return False
         new_state = self._change_valve_state(valve, gas_num)
         self.change_gas_valve_opened(new_state, device_num=gas_num)
+
+    @BaseSystem.action
+    def change_tmp_pump_state(self):
+        new_state = self.small_tmp_pump.change_state()
+        self.change_tmp_pump_opened(new_state)
 
     @BaseSystem.action
     def change_air_valve_state(self):

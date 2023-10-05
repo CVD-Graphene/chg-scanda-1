@@ -8,8 +8,14 @@ class ChangeAirValveStateEffect(SystemEffect):
 
 class ChangeGasValveStateEffect(ManyDeviceSystemEffect):
     def _call_function(self, is_open, device_num=None):
-        print('{{{ ChangeGasValveStateEffect }}}', is_open, device_num)
+        # print('{{{ ChangeGasValveStateEffect }}}', is_open, device_num)
         return self._system._valves[device_num].set_is_open_state(is_open)
+
+
+class ChangeTmpPumpStateEffect(ManyDeviceSystemEffect):
+    def _call_function(self, is_open):
+        # print('{{{ ChangeGasValveStateEffect }}}', is_open, device_num)
+        return self._system.small_tmp_pump.set_is_open_state(is_open)
 
 
 # =========== PUMP

@@ -56,15 +56,23 @@ VAKUMETR_SPI_READ_DEVICE = 0
 DIGITAL_FUSE_PORTS = [5, 22, 6, ]
 
 VALVES_CONFIGURATION = [
+    # {
+    #     "NAME": "NO GAS",
+    #     'PORT': 12,  # GPIO PORT FOR RELE
+    #     "IS_GAS": True,
+    #     "MAX_SCCM": 2175.0,  # NOT NECESSARY, IF NOT PROVIDED, WILL BE USED `MAX_DEFAULT_SCCM_VALUE`
+    #     # 'CONTROLLER_VOLTAGE_RATIO': 1,  # BH CONTROLLER VOLTAGE FUNCTION ('a' from 'a*x+b') (0, +inf)
+    #     # 'CONTROLLER_VOLTAGE_SHIFT': 0,  # BH CONTROLLER VOLTAGE FUNCTION ('b' from 'a*x+b') (-inf, +inf)
+    #     # 'ADDRESS': 0,  # RRG ADDRESS FOR SPI (from 0 to 7: 000, 001, ..., 111)
+    #     # 'DAC_ADDRESS': 0,  # RRG ADDRESS FOR SPI DAC [SET VALUE] (from 0 to 7: 000, 001, ..., 111)
+    #     'VAKUMETR_ADDRESS': 0,  # VAKUMETR ADDRESS FOR READING PRESSURE IN BALLOON
+    #     "INSTRUMENT_NUMBER": 3,  # rrg modbus instrument number
+    # },
     {
         "NAME": "Ar",
         'PORT': 18,  # GPIO PORT FOR RELE
         "IS_GAS": True,
         "MAX_SCCM": 2175.0,  # NOT NECESSARY, IF NOT PROVIDED, WILL BE USED `MAX_DEFAULT_SCCM_VALUE`
-        # 'CONTROLLER_VOLTAGE_RATIO': 1,  # BH CONTROLLER VOLTAGE FUNCTION ('a' from 'a*x+b') (0, +inf)
-        # 'CONTROLLER_VOLTAGE_SHIFT': 0,  # BH CONTROLLER VOLTAGE FUNCTION ('b' from 'a*x+b') (-inf, +inf)
-        # 'ADDRESS': 0,  # RRG ADDRESS FOR SPI (from 0 to 7: 000, 001, ..., 111)
-        # 'DAC_ADDRESS': 0,  # RRG ADDRESS FOR SPI DAC [SET VALUE] (from 0 to 7: 000, 001, ..., 111)
         'VAKUMETR_ADDRESS': 0,  # VAKUMETR ADDRESS FOR READING PRESSURE IN BALLOON
         "INSTRUMENT_NUMBER": 3,  # rrg modbus instrument number
     },

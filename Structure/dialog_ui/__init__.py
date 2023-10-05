@@ -71,6 +71,10 @@ class AppMainDialogWindow(BaseMainDialogWindow):
             self.milw.pressure_block.pump_block.on_update_pump_is_open_signal.emit)
 
         # << THROTTLE >> #
+        self.milw.pressure_block.pump_block.update_throttle_state_signal.connect(
+            self.system.change_tmp_pump_state)  # change_tmp_pump_opened
+        self.system.change_tmp_pump_opened.connect(
+            self.milw.pressure_block.pump_block.on_update_throttle_state_signal.emit)
         # self.milw.pressure_block.pump_block.update_throttle_state_signal\
         #     .connect(self.system.back_pressure_valve_controller.on_change_state)
         # self.system.throttle_state_effect.connect(
