@@ -19,5 +19,5 @@ class MainBlockWidget(BaseMainBlockWidget):
         self.pressure_control_block = PressureControlBlock()
         self.layout.addWidget(self.pressure_control_block)
 
-        # self.temperature_block = TemperatureBlock()
-        # self.layout.addWidget(self.temperature_block)
+        self.temperature_block = TemperatureBlock()
+        self.layout.addWidget(self.temperature_block)

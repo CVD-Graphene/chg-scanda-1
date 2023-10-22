@@ -91,47 +91,47 @@ class AppMainDialogWindow(BaseMainDialogWindow):
 
         # CURRENT
 
-        # self.milw.temperature_block.current_settings.set_current_block.\
-        #     set_value_function = self.system.set_target_current
-        # self.system.target_current_effect.connect(
-        #     self.milw.temperature_block.current_settings.set_current_block.set_value
-        # )
-        #
-        # self.system.actual_current_effect.connect(
-        #     self.milw.temperature_block.current_settings.set_current_value
-        # )
-        # self.system.actual_voltage_effect.connect(
-        #     self.milw.temperature_block.current_settings.set_voltage_value
-        # )
-        #
-        # self.system.is_power_current_source_effect.connect(
-        #     self.milw.temperature_block.current_settings.set_current_block.on_update_is_power_signal.emit
-        # )
-        # self.milw.temperature_block.current_settings.set_current_block\
-        #     .power_button.clicked.connect(self.system.current_source_controller.toggle_power)
+        self.milw.temperature_block.current_settings.set_current_block.\
+            set_value_function = self.system.set_target_current
+        self.system.target_current_effect.connect(
+            self.milw.temperature_block.current_settings.set_current_block.set_value
+        )
+
+        self.system.actual_current_effect.connect(
+            self.milw.temperature_block.current_settings.set_current_value
+        )
+        self.system.actual_voltage_effect.connect(
+            self.milw.temperature_block.current_settings.set_voltage_value
+        )
+
+        self.system.is_power_current_source_effect.connect(
+            self.milw.temperature_block.current_settings.set_current_block.on_update_is_power_signal.emit
+        )
+        self.milw.temperature_block.current_settings.set_current_block\
+            .power_button.clicked.connect(self.system.current_source_controller.toggle_power)
 
         # RAMP
-        # self.milw.temperature_block.current_settings.rise_current_block\
-        #     .on_ramp_press = self.system.on_ramp_press_start
-        # self.milw.temperature_block.current_settings.rise_current_block\
-        #     .input_current.textEdited.connect(self.system.set_target_current_ramp_value)
-        # self.milw.temperature_block.current_settings.rise_current_block\
-        #     .input_time.textEdited.connect(self.system.set_ramp_seconds)
+        self.milw.temperature_block.current_settings.rise_current_block\
+            .on_ramp_press = self.system.on_ramp_press_start
+        self.milw.temperature_block.current_settings.rise_current_block\
+            .input_current.textEdited.connect(self.system.set_target_current_ramp_value)
+        self.milw.temperature_block.current_settings.rise_current_block\
+            .input_time.textEdited.connect(self.system.set_ramp_seconds)
 
-        # self.system.ramp_seconds_effect.connect(
-        #     self.milw.temperature_block.current_settings.rise_current_block.left_time_signal.emit
-        # )
-        # self.system.target_current_ramp_effect.connect(
-        #     self.milw.temperature_block.current_settings.rise_current_block.target_current_signal.emit
-        # )
-        # self.system.is_active_ramp_effect.connect(
-        #     self.milw.temperature_block.current_settings.rise_current_block\
-        #         .active_ramp_signal.emit
-        # )
-        # self.system.is_waiting_ramp_effect.connect(
-        #     self.milw.temperature_block.current_settings.rise_current_block\
-        #         .waiting_ramp_signal.emit
-        # )
+        self.system.ramp_seconds_effect.connect(
+            self.milw.temperature_block.current_settings.rise_current_block.left_time_signal.emit
+        )
+        self.system.target_current_ramp_effect.connect(
+            self.milw.temperature_block.current_settings.rise_current_block.target_current_signal.emit
+        )
+        self.system.is_active_ramp_effect.connect(
+            self.milw.temperature_block.current_settings.rise_current_block\
+                .active_ramp_signal.emit
+        )
+        self.system.is_waiting_ramp_effect.connect(
+            self.milw.temperature_block.current_settings.rise_current_block\
+                .waiting_ramp_signal.emit
+        )
 
         # PYROMETER ############
         # self.system.current_temperature_effect.connect(

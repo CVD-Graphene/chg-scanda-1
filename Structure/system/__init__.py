@@ -34,6 +34,7 @@ from coregraphene.components.controllers import (
     DigitalFuseController,
     BackPressureValveController,
     VakumetrAdcController, BhRrgController, SeveralRrgModbusController, RrgModbusController, BhVakumetrController,
+    TetronCurrentSourceController,
 )
 from coregraphene.system import BaseSystem
 from coregraphene.conf import settings
@@ -61,10 +62,11 @@ class AppSystem(BaseSystem):
             'port_communicator': settings.ACCURATE_VAKUMETR_COMMUNICATOR_PORT,
             'baudrate': settings.ACCURATE_VAKUMETR_BAUDRATE,
         },
-        # 'current_source': {
-        #     'port_communicator': settings.CURRENT_SOURCE_COMMUNICATOR_PORT,
-        #     'baudrate': settings.CURRENT_SOURCE_BAUDRATE,
-        # },
+        'current_source': {
+            # 'port_communicator': settings.CURRENT_SOURCE_COMMUNICATOR_PORT,
+            'baudrate': settings.CURRENT_SOURCE_BAUDRATE,
+            'timeout': settings.CURRENT_SOURCE_TIMEOUT,
+        },
         'pyrometer': {
             'baudrate': settings.PYROMETER_TEMPERATURE_BAUDRATE,
         },
@@ -82,7 +84,7 @@ class AppSystem(BaseSystem):
     _ports_attr_names = {
         # 'vakumetr': 'vakumetr_port',
         'rrg': 'rrg_port',
-        # 'current_source': 'current_source_port',
+        'current_source': 'current_source_port',
         'pyrometer': 'pyrometer_temperature_port',
         # 'throttle': 'back_pressure_valve_port',
     }
@@ -90,7 +92,7 @@ class AppSystem(BaseSystem):
     _usb_devices_ports = {
         'vakumetr': settings.ACCURATE_VAKUMETR_USB_PORT,
         'rrg': settings.RRG_USB_PORT,
-        # 'current_source': settings.CURRENT_SOURCE_USB_PORT,
+        'current_source': settings.CURRENT_SOURCE_USB_PORT,
         'pyrometer': settings.PYROMETER_TEMPERATURE_USB_PORT,
         # 'throttle': settings.BACK_PRESSURE_VALVE_USB_PORT,
     }
@@ -99,7 +101,7 @@ class AppSystem(BaseSystem):
         used_ports = []
         self.vakumetr_port = None
         self.rrg_port = None
-        # self.current_source_port = None
+        self.current_source_port = None
         self.pyrometer_temperature_port = None
         self.back_pressure_valve_port = None
 
@@ -109,7 +111,7 @@ class AppSystem(BaseSystem):
             'rrg': RrgModbusController,
             # 'vakumetr': AccurateVakumetrController,
             'pyrometer': PyrometerTemperatureController,
-            # 'current_source': CurrentSourceController,
+            'current_source': TetronCurrentSourceController,
         }
 
         for controller_code, port_name_attr in self._ports_attr_names.items():
@@ -125,20 +127,20 @@ class AppSystem(BaseSystem):
             "|> FOUND PORTS:",
             # "vakumetr:", self.vakumetr_port,
             "rrg:", self.rrg_port,
-            # 'current_source:', self.current_source_port,
+            'current_source:', self.current_source_port,
             "pyrometer", self.pyrometer_temperature_port,
             # 'throttle', self.back_pressure_valve_port,
         )
         # assert self.vakumetr_port is not None
         assert self.rrg_port is not None
-        # assert self.current_source_port is not None
+        assert self.current_source_port is not None
         assert self.pyrometer_temperature_port is not None
         # assert self.back_pressure_valve_port is not None
 
         self.ports = {
             'vakumetr': self.vakumetr_port,
             'rrg': self.rrg_port,
-            # 'current_source': self.current_source_port,
+            'current_source': self.current_source_port,
             'pyrometer': self.pyrometer_temperature_port,
             # 'throttle': self.back_pressure_valve_port,
         }
@@ -217,10 +219,10 @@ class AppSystem(BaseSystem):
         for i, port in enumerate(settings.DIGITAL_FUSE_PORTS):
             self._digital_fuses[i] = DigitalFuseController(port=port)
 
-        # self.current_source_controller = CurrentSourceController(
-        #     port=self.current_source_port,
-        #     **self._default_controllers_kwargs.get('current_source'),
-        # )
+        self.current_source_controller = TetronCurrentSourceController(
+            port=self.current_source_port,
+            **self._default_controllers_kwargs.get('current_source'),
+        )
 
         self._controllers: list[AbstractController] = [
             self.accurate_vakumetr_controller,
@@ -230,7 +232,7 @@ class AppSystem(BaseSystem):
             self.small_tmp_pump,
             # self.bh_rrg_controller,
             # self.gases_pressure_controller,
-            # self.current_source_controller,
+            self.current_source_controller,
 
             self.pump_valve_controller,
             self.pump_manage_controller,
@@ -283,22 +285,22 @@ class AppSystem(BaseSystem):
         self.temperature_pid_speed_effect = SetTemperaturePidSpeedSystemEffect(system=self)
 
         # ===== Current AKIP ========= #
-        # self.target_current_effect = SetTargetCurrentEffect(system=self)
+        self.target_current_effect = SetTargetCurrentEffect(system=self)
 
-        # self.actual_current_effect = SingleAnswerSystemEffect(system=self)
-        # self.actual_current_effect.connect(self._on_get_actual_current)
-        # self.current_source_controller.actual_current_effect.connect(self.actual_current_effect)
+        self.actual_current_effect = SingleAnswerSystemEffect(system=self)
+        self.actual_current_effect.connect(self._on_get_actual_current)
+        self.current_source_controller.actual_current_effect.connect(self.actual_current_effect)
 
-        # self.actual_voltage_effect = SingleAnswerSystemEffect(system=self)
-        # self.actual_voltage_effect.connect(self._on_get_actual_voltage)
-        # self.current_source_controller.actual_voltage_effect.connect(self.actual_voltage_effect)
-        #
-        # self.is_power_current_source_effect = SingleAnswerSystemEffect(system=self)
-        # self.current_source_controller.is_power_effect.connect(self.is_power_current_source_effect)
-        #
-        # self.ramp_seconds_effect = SetRampSecondsEffect(system=self)
-        # self.target_current_ramp_effect = SetTargetCurrentRampEffect(system=self)
-        #
+        self.actual_voltage_effect = SingleAnswerSystemEffect(system=self)
+        self.actual_voltage_effect.connect(self._on_get_actual_voltage)
+        self.current_source_controller.actual_voltage_effect.connect(self.actual_voltage_effect)
+
+        self.is_power_current_source_effect = SingleAnswerSystemEffect(system=self)
+        self.current_source_controller.is_power_effect.connect(self.is_power_current_source_effect)
+
+        self.ramp_seconds_effect = SetRampSecondsEffect(system=self)
+        self.target_current_ramp_effect = SetTargetCurrentRampEffect(system=self)
+
         self.is_active_ramp_effect = SetIsRampActiveEffect(system=self)
         self.is_waiting_ramp_effect = SetIsRampWaitingEffect(system=self)
 
@@ -467,9 +469,9 @@ class AppSystem(BaseSystem):
         new_state = self._change_valve_state(self.pump_manage_controller, "PUMP M")
         self.change_pump_manage_active_effect(new_state)
 
-    # @BaseSystem.action
-    # def set_target_current(self, value):
-    #     return self.current_source_controller.set_target_current(value)
+    @BaseSystem.action
+    def set_target_current(self, value):
+        return self.current_source_controller.set_target_current(value)
 
     def _on_get_current_temperature(self, value):
         self.pyrometer_temperature_value = value
