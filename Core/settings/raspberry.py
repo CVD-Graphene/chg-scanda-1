@@ -7,7 +7,7 @@ MAX_RECIPE_STEP_SECONDS = 60 * 60 * 24 * 2  # set to None for remove limit for s
 # ACCURATE_VAKUMETR_PORT = 1
 ACCURATE_VAKUMETR_COMMUNICATOR_PORT = 1
 # ACCURATE_VAKUMETR_USB_PORT = '/dev/ttyUSB1'  # FOR CVD-GRAPHENE USE USB1 (?)
-ACCURATE_VAKUMETR_USB_PORT = '1-1.4.4'  # порт по usb (хаб или отдельно -- неважно),
+ACCURATE_VAKUMETR_USB_PORT = '1-1.2.3.4'  # порт по usb (хаб или отдельно -- неважно),
 # команда для определения: sudo dmesg | grep ttyUSB | grep usb
 ACCURATE_VAKUMETR_BAUDRATE = 115200  # FOR CVD-GRAPHENE USE USB1 (?)
 
