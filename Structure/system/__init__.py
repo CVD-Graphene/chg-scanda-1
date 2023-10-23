@@ -148,16 +148,16 @@ class AppSystem(BaseSystem):
         gc.collect()
 
     def _init_controllers(self):
-        # self.accurate_vakumetr_controller = AccurateVakumetrController(
-        #     get_potential_port=self.get_potential_controller_port_1,
-        #     port=self.vakumetr_port,
-        #     **self._default_controllers_kwargs.get('vakumetr'),
-        # )
-        self.accurate_vakumetr_controller = BhVakumetrController(
-            # port=self.vakumetr_port,
-            **self._default_controllers_kwargs.get('bh_rrg'),
+        self.accurate_vakumetr_controller = AccurateVakumetrController(
             get_potential_port=self.get_potential_controller_port_1,
+            port=self.vakumetr_port,
+            **self._default_controllers_kwargs.get('vakumetr'),
         )
+        # self.accurate_vakumetr_controller = BhVakumetrController(
+        #     # port=self.vakumetr_port,
+        #     **self._default_controllers_kwargs.get('bh_rrg'),
+        #     get_potential_port=self.get_potential_controller_port_1,
+        # )
         self.pyrometer_temperature_controller = PyrometerTemperatureController(
             get_potential_port=self.get_potential_controller_port_1,
             port=self.pyrometer_temperature_port,
@@ -322,11 +322,11 @@ class AppSystem(BaseSystem):
 
         # ===== Accurate vakumetr ===== #
         self.accurate_vakumetr_effect = SingleAnswerSystemEffect(system=self)
-        # self.accurate_vakumetr_controller.actual_pressure_effect. \
-        #     connect(self.accurate_vakumetr_effect)
-        # self.accurate_vakumetr_effect.connect(self._on_get_accurate_vakumetr_value)
-        self.accurate_vakumetr_controller.get_current_pressure_effect. \
+        self.accurate_vakumetr_controller.actual_pressure_effect. \
             connect(self.accurate_vakumetr_effect)
+        self.accurate_vakumetr_effect.connect(self._on_get_accurate_vakumetr_value)
+        # self.accurate_vakumetr_controller.get_current_pressure_effect. \
+        #     connect(self.accurate_vakumetr_effect)
 
         #########################
 
