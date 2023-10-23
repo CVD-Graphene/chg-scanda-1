@@ -82,7 +82,7 @@ class AppSystem(BaseSystem):
     }
 
     _ports_attr_names = {
-        # 'vakumetr': 'vakumetr_port',
+        'vakumetr': 'vakumetr_port',
         'rrg': 'rrg_port',
         'current_source': 'current_source_port',
         'pyrometer': 'pyrometer_temperature_port',
@@ -109,7 +109,7 @@ class AppSystem(BaseSystem):
         self._controllers_check_classes = {
             # 'throttle': BackPressureValveController,
             'rrg': RrgModbusController,
-            # 'vakumetr': AccurateVakumetrController,
+            'vakumetr': AccurateVakumetrController,
             'pyrometer': PyrometerTemperatureController,
             'current_source': TetronCurrentSourceController,
         }
@@ -125,13 +125,13 @@ class AppSystem(BaseSystem):
 
         print(
             "|> FOUND PORTS:",
-            # "vakumetr:", self.vakumetr_port,
+            "vakumetr:", self.vakumetr_port,
             "rrg:", self.rrg_port,
             'current_source:', self.current_source_port,
             "pyrometer", self.pyrometer_temperature_port,
             # 'throttle', self.back_pressure_valve_port,
         )
-        # assert self.vakumetr_port is not None
+        assert self.vakumetr_port is not None
         assert self.rrg_port is not None
         assert self.current_source_port is not None
         assert self.pyrometer_temperature_port is not None
