@@ -14,6 +14,8 @@ class SetTemperatureBlock(QWidget):
     active_regulation_signal = pyqtSignal(bool)
     on_regulation_press_signal = pyqtSignal()
 
+    target_temperature_value = None
+
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 
@@ -71,6 +73,10 @@ class SetTemperatureBlock(QWidget):
         # self.bottom_layout.setStretch(1, 1)
         self.bottom_layout.addWidget(self.label_2, 1)
 
+        self.label_3 = QLabel()
+        self.label_3.setText("Текущая уставка: ")
+        # self.label_3.setStyleSheet(styles.label)
+
         ####################
         self.button = QPushButton()
         self.button.setText("START")
@@ -82,6 +88,7 @@ class SetTemperatureBlock(QWidget):
         self.layout.addWidget(self.title, QtCore.Qt.AlignHCenter)
         self.layout.addLayout(self.bottom_layout, QtCore.Qt.AlignLeft)
         self.layout.addWidget(self.button, alignment=QtCore.Qt.AlignHCenter)
+        self.layout.addWidget(self.label_3, alignment=QtCore.Qt.AlignHCenter)
 
         self.active_regulation_signal.connect(self._set_regulation_is_active)
         self.target_temperature_signal.connect(self._set_target_temperature)
@@ -94,6 +101,7 @@ class SetTemperatureBlock(QWidget):
         try:
             input_value = self.input.text().replace(',', '.')
             value = int(float(input_value))
+            self._on_change_target_temperature(value)
             self.on_update_target_temperature_signal.emit(value)
         except:
             self.input.setText('0')
@@ -108,4 +116,10 @@ class SetTemperatureBlock(QWidget):
             self.button.setStyleSheet(styles.button)
 
     def _set_target_temperature(self, value):
+        self._on_change_target_temperature(value)
         self.input.setText(str(value))
+
+    def _on_change_target_temperature(self, value):
+        self.target_temperature_value = value
+        print("New TARGET TEMPERATURE:", value)
+        self.label_3.setText(f"Текущая уставка: {value}")
