@@ -46,4 +46,4 @@ class PressureControlBlock(QWidget):
         self.pump = FlowControlWidget(title="Pump")
         self.vent = FlowControlWidget(title="Vent")
         self.layout.addWidget(self.pump, alignment=QtCore.Qt.AlignBottom)
-        self.layout.addWidget(self.vent, alignment=QtCore.Qt.AlignBottom)
+        # self.layout.addWidget(self.vent, alignment=QtCore.Qt.AlignBottom)
