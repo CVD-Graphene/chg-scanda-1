@@ -453,6 +453,10 @@ class StabilizePressureAction(AppAction):
             target_pressure * (1.0 - error_rate),
             target_pressure * (1.0 + error_rate),
         ]
+        current_pressure = self.system.accurate_vakumetr_value
+        linear_change_up = None
+        if error_rate <= 0.000001:
+            linear_change_up = target_pressure >= current_pressure
 
         while True:
             self.interrupt_if_stop_state()
@@ -463,6 +467,12 @@ class StabilizePressureAction(AppAction):
             if MAX_RECIPE_STEP_SECONDS and (time.time() - self.start_time >= MAX_RECIPE_STEP_SECONDS):
                 self.system.add_error_log(f"Стабилизация давления не завершилась до достижения максимального времени")
                 raise NotAchievingActionGoal
+
+            if linear_change_up is not None:
+                if linear_change_up and current_pressure >= target_pressure:
+                    break
+                elif (not linear_change_up) and current_pressure <= target_pressure:
+                    break
 
             start_stabilization_time = time.time()
             success = False
