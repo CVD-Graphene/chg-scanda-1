@@ -88,7 +88,9 @@ class PlotBlock(QWidget):
             os.makedirs(images_dir)
         name = os.path.join(
             images_dir,
-            str(datetime.datetime.now().replace(microsecond=0))
+            str(datetime.datetime.now().replace(
+                # microsecond=0
+            ))
             .replace('.', '_').replace(':', '_').replace(' ', '_') + '.png'
         )
         exporter = pq.exporters.ImageExporter(
