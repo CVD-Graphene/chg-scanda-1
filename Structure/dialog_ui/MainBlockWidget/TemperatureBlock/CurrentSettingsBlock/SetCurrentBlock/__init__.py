@@ -54,11 +54,18 @@ class SetCurrentBlock(QWidget):
         self.is_power = True
         self.is_power_waiting = False
         self.on_update_is_power_signal.connect(self._on_update_is_power)
+
+        power_layout = QVBoxLayout()
+
         self.power_button = QPushButton()
         self.power_button.setObjectName("power_button")
         self.power_button.setStyleSheet(styles.power_button)
         self.power_button.clicked.connect(self._on_press_power_button)
-        self.layout.addWidget(self.power_button, 0, 8, )
+        # self.layout.addWidget(self.power_button, 0, 8, )
+        power_layout.addWidget(self.power_button)
+        power_layout.addWidget(QLabel('источник тока'))
+
+        self.layout.addLayout(power_layout, 0, 8, )
         self._update_power_button_ui()
 
         # ################### DIGITS AND BUTTONS ###################### #
