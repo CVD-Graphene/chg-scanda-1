@@ -37,7 +37,7 @@ class PumpsControlWidget(QWidget):
     on_update_pump_valve_is_open_signal = pyqtSignal(bool)
 
     update_throttle_state_signal = pyqtSignal()
-    on_update_throttle_state_signal = pyqtSignal(int)
+    on_update_throttle_state_signal = pyqtSignal(bool)
 
     def __init__(self):
         super().__init__(parent=None)
@@ -61,9 +61,9 @@ class PumpsControlWidget(QWidget):
 
         self.back_pressure_valve_layout = QHBoxLayout()
         self.back_pressure_valve_layout.addSpacing(2)
-        self.back_pressure_valve_layout.addWidget(
-            self.throttle_info, stretch=2,
-            alignment=QtCore.Qt.AlignLeft | QtCore.Qt.AlignHCenter)
+        # self.back_pressure_valve_layout.addWidget(
+        #     self.throttle_info, stretch=2,
+        #     alignment=QtCore.Qt.AlignLeft | QtCore.Qt.AlignHCenter)
         self.back_pressure_valve_layout.addWidget(
             self.throttle_b, stretch=2,
             alignment=QtCore.Qt.AlignRight | QtCore.Qt.AlignHCenter)
@@ -104,14 +104,18 @@ class PumpsControlWidget(QWidget):
         state = BUTTERFLY_BUTTON_STATE.OPEN if is_open else BUTTERFLY_BUTTON_STATE.CLOSE
         self.pump_valve_b.update_state_signal.emit(state)
 
-    def _draw_throttle_state(self, state: int):
-        valve_state = BUTTERFLY_BUTTON_STATE.INACTIVE
-        if state == BACK_PRESSURE_VALVE_STATE.WAITING:
-            valve_state = BUTTERFLY_BUTTON_STATE.INACTIVE
-        elif state == BACK_PRESSURE_VALVE_STATE.OPEN:
-            valve_state = BUTTERFLY_BUTTON_STATE.OPEN
-        elif state == BACK_PRESSURE_VALVE_STATE.CLOSE:
-            valve_state = BUTTERFLY_BUTTON_STATE.CLOSE
-        elif state == BACK_PRESSURE_VALVE_STATE.REGULATION:
-            valve_state = BUTTERFLY_BUTTON_STATE.REGULATION
-        self.throttle_b.update_state_signal.emit(valve_state)
+    # def _draw_throttle_state(self, state: int):
+    #     valve_state = BUTTERFLY_BUTTON_STATE.INACTIVE
+    #     if state == BACK_PRESSURE_VALVE_STATE.WAITING:
+    #         valve_state = BUTTERFLY_BUTTON_STATE.INACTIVE
+    #     elif state == BACK_PRESSURE_VALVE_STATE.OPEN:
+    #         valve_state = BUTTERFLY_BUTTON_STATE.OPEN
+    #     elif state == BACK_PRESSURE_VALVE_STATE.CLOSE:
+    #         valve_state = BUTTERFLY_BUTTON_STATE.CLOSE
+    #     elif state == BACK_PRESSURE_VALVE_STATE.REGULATION:
+    #         valve_state = BUTTERFLY_BUTTON_STATE.REGULATION
+    #     self.throttle_b.update_state_signal.emit(valve_state)
+
+    def _draw_throttle_state(self, is_open: bool):
+        state = BUTTERFLY_BUTTON_STATE.OPEN if is_open else BUTTERFLY_BUTTON_STATE.CLOSE
+        self.throttle_b.update_state_signal.emit(state)
