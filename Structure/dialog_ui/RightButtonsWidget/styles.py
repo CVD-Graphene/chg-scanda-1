@@ -21,6 +21,12 @@ styles = StyleSheet({
         "font-size": "20px",
         "background-color": "rgb(255, 255, 230)",
     },
+    "choose_recipe_button": {
+        # "name": "QPushButton#settings_button",
+        "height": "70px",
+        "font-size": "20px",
+        "background-color": "rgb(255, 255, 230)",
+    },
     "run_recipe_button": {
         "name": "QPushButton#run_recipe_button",
         "min-height": "100px",
@@ -48,5 +54,8 @@ styles = StyleSheet({
         "padding": "10px",
         "font-size": "24px",
         "background-color": 'rgb(255, 0, 0)',
+    },
+    "recipes_buttons_widget": {
+        "background-color": 'rgb(220, 220, 220)',
     },
 })

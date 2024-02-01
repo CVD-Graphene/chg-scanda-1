@@ -10,6 +10,7 @@ from .MainBlockWidget import MainBlockWidget
 from coregraphene.conf import settings
 from coregraphene.constants import RECIPE_STATES, RECIPE_STATES_TO_STR, NOTIFICATIONS
 from grapheneqtui.structures import BaseMainDialogWindow
+from .RightButtonsWidget import AppRightButtonsWidget, RecipesButtonsWidget
 from ..system import AppSystem
 
 
@@ -22,6 +23,28 @@ class AppMainDialogWindow(BaseMainDialogWindow):
     recipe_states_to_str = RECIPE_STATES_TO_STR
     recipe_table_column_names = settings.TABLE_COLUMN_NAMES
     notifications_configuration = NOTIFICATIONS
+    right_buttons_block_class = AppRightButtonsWidget
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    def set_right_buttons(self):
+        self.recipe_btns = RecipesButtonsWidget(
+            parent=self,
+            on_open_recipe=self.on_open_recipe,
+            on_run_recipe_by_file=self.on_choose_recipe_file,
+        )
+        self.right_buttons_layout_widget = self.right_buttons_block_class(
+            recipe_btns=self.recipe_btns,
+            on_close=self.close,
+            on_create_recipe=self.on_create_recipe,
+            on_open_recipe=self.on_open_recipe,
+            on_stop_recipe=self.system.on_stop_recipe,
+            on_pause_recipe=self.system.on_pause_recipe,
+            on_get_recipe_state=self.system.get_recipe_state,
+            recipe_states=self.recipe_states,
+        )
+        self.main_window.addWidget(self.right_buttons_layout_widget)
 
     def connect_controllers_actions(self):
         # GASES #################
