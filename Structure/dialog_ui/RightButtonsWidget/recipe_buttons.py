@@ -135,7 +135,7 @@ class RecipesButtonsWidget(QWidget):
 
     def on_run_recipe(self):
         self.on_close()
-        self._on_run_recipe()
+        self._on_open_recipe()
 
     def _update_table_ui(self):
         pass
@@ -173,8 +173,8 @@ class RecipesButtonsWidget(QWidget):
     def on_rec_5(self):
         self.on_rec_run(5)
 
-    def on_rec_run(self, file_nun):
-        path = os.path.join('recipes', self.material, f"recipe_{file_nun}.xlsx")
+    def on_rec_run(self, file_num):
+        path = os.path.join('recipes', self.material, f"recipe_{file_num}.xlsx")
         self._on_run_recipe_by_file(path)
         self.on_close()
 
