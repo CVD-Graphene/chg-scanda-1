@@ -190,7 +190,7 @@ class AppSystem(BaseSystem):
         #     port=self.back_pressure_valve_port,
         #     **self._default_controllers_kwargs.get('throttle'),
         # )
-        self.small_tmp_pump = ValveController(port=12)
+        self.small_tmp_pump = ValveController(port=settings.SMALL_PUMP_PORT)
         ##############
 
         self._valves = {}
