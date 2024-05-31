@@ -93,6 +93,12 @@ class AppMainDialogWindow(BaseMainDialogWindow):
         self.system.change_pump_manage_active_effect.connect(
             self.milw.pressure_block.pump_block.on_update_pump_is_open_signal.emit)
 
+        # PUMP TC110 ############
+        self.milw.pressure_block.pump_block.update_pump_tc110_state_signal \
+            .connect(self.system.change_pump_tc110_manage_state)
+        self.system.change_pump_tc110_active_effect.connect(
+            self.milw.pressure_block.pump_block.on_update_pump_tc110_is_open_signal.emit)
+
         # << THROTTLE >> #
         self.milw.pressure_block.pump_block.update_throttle_state_signal.connect(
             self.system.change_tmp_pump_state)  # change_tmp_pump_opened

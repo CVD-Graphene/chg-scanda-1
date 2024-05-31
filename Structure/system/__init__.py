@@ -22,23 +22,23 @@ from .effects import (
     ChangePumpManageStateEffect,
     SetTargetTemperatureSystemEffect,
     SetIsTemperatureRegulationActiveEffect,
-    SetTemperaturePidSpeedSystemEffect, ChangeTmpPumpStateEffect,
+    SetTemperaturePidSpeedSystemEffect,
+    ChangeTmpPumpStateEffect, ChangePumpTC110ManageStateEffect,
 )
 from coregraphene.components.controllers import (
     AbstractController,
     AccurateVakumetrController,
     ValveController,
-    CurrentSourceController,
     PyrometerTemperatureController,
-    SeveralRrgAdcDacController,
     DigitalFuseController,
-    BackPressureValveController,
-    VakumetrAdcController, BhRrgController, SeveralRrgModbusController, RrgModbusController, BhVakumetrController,
+    SeveralRrgModbusController,
+    RrgModbusController,
     TetronCurrentSourceController,
+    PumpTC110Controller,
 )
 from coregraphene.system import BaseSystem
 from coregraphene.conf import settings
-from coregraphene.utils import get_available_ttyusb_ports, get_available_ttyusb_port_by_usb
+from coregraphene.utils import get_available_ttyusb_port_by_usb
 
 VALVES_CONFIGURATION = settings.VALVES_CONFIGURATION
 LOCAL_MODE = settings.LOCAL_MODE
@@ -70,6 +70,9 @@ class AppSystem(BaseSystem):
         'pyrometer': {
             'baudrate': settings.PYROMETER_TEMPERATURE_BAUDRATE,
         },
+        'pump_tc110': {
+            'port_communicator': settings.PUMP_TC110_COMMUNICATOR_PORT,
+        },
         'bh_rrg': {
             'baudrate': settings.BH_RRG_CONTROLLER_BAUDRATE,
             'port': settings.BH_RRG_CONTROLLER_USB_PORT,
@@ -86,6 +89,7 @@ class AppSystem(BaseSystem):
         'rrg': 'rrg_port',
         'current_source': 'current_source_port',
         'pyrometer': 'pyrometer_temperature_port',
+        'pump_tc110': 'pump_tc110_port',
         # 'throttle': 'back_pressure_valve_port',
     }
 
@@ -94,6 +98,7 @@ class AppSystem(BaseSystem):
         'rrg': settings.RRG_USB_PORT,
         'current_source': settings.CURRENT_SOURCE_USB_PORT,
         'pyrometer': settings.PYROMETER_TEMPERATURE_USB_PORT,
+        'pump_tc110': settings.PUMP_TC110_USB_PORT,
         # 'throttle': settings.BACK_PRESSURE_VALVE_USB_PORT,
     }
 
@@ -104,6 +109,7 @@ class AppSystem(BaseSystem):
         self.current_source_port = None
         self.pyrometer_temperature_port = None
         self.back_pressure_valve_port = None
+        self.pump_tc110_port = None
 
         # return
         self._controllers_check_classes = {
@@ -112,6 +118,7 @@ class AppSystem(BaseSystem):
             'vakumetr': AccurateVakumetrController,
             'pyrometer': PyrometerTemperatureController,
             'current_source': TetronCurrentSourceController,
+            'pump_tc110': PumpTC110Controller,
         }
 
         for controller_code, port_name_attr in self._ports_attr_names.items():
@@ -129,19 +136,21 @@ class AppSystem(BaseSystem):
             "rrg:", self.rrg_port,
             'current_source:', self.current_source_port,
             "pyrometer", self.pyrometer_temperature_port,
+            'pump_tc110', self.pump_tc110_port,
             # 'throttle', self.back_pressure_valve_port,
         )
         assert self.vakumetr_port is not None
         assert self.rrg_port is not None
         assert self.current_source_port is not None
         assert self.pyrometer_temperature_port is not None
-        # assert self.back_pressure_valve_port is not None
+        assert self.pump_tc110_port is not None
 
         self.ports = {
             'vakumetr': self.vakumetr_port,
             'rrg': self.rrg_port,
             'current_source': self.current_source_port,
             'pyrometer': self.pyrometer_temperature_port,
+            'pump_tc110': self.pump_tc110_port,
             # 'throttle': self.back_pressure_valve_port,
         }
 
@@ -162,6 +171,11 @@ class AppSystem(BaseSystem):
             get_potential_port=self.get_potential_controller_port_1,
             port=self.pyrometer_temperature_port,
             **self._default_controllers_kwargs.get('pyrometer'),
+        )
+        self.pump_tc110_controller = PumpTC110Controller(
+            get_potential_port=self.get_potential_controller_port_1,
+            port=self.pump_tc110_port,
+            **self._default_controllers_kwargs.get('pump_tc110'),
         )
 
         self.air_valve_controller = ValveController(
@@ -227,6 +241,7 @@ class AppSystem(BaseSystem):
         self._controllers: list[AbstractController] = [
             self.accurate_vakumetr_controller,
             self.air_valve_controller,
+            self.pump_tc110_controller,
             self.pyrometer_temperature_controller,
             self.rrgs_controller,
             self.small_tmp_pump,
@@ -258,6 +273,9 @@ class AppSystem(BaseSystem):
         # ===== PUMP ========== #
         self.change_pump_valve_opened_effect = ChangePumpValveStateEffect(system=self)
         self.change_pump_manage_active_effect = ChangePumpManageStateEffect(system=self)
+
+        # ===== PUMP TC110 ==== #
+        self.change_pump_tc110_active_effect = ChangePumpTC110ManageStateEffect(system=self)
 
         # ===== RRG =========== #
         self.set_target_rrg_sccm_effect = SetTargetRrgSccmEffect(system=self)
@@ -468,6 +486,11 @@ class AppSystem(BaseSystem):
     def change_pump_manage_state(self):
         new_state = self._change_valve_state(self.pump_manage_controller, "PUMP M")
         self.change_pump_manage_active_effect(new_state)
+
+    @BaseSystem.action
+    def change_pump_tc110_manage_state(self):
+        new_state = not self.pump_tc110_controller.is_active
+        self.change_pump_tc110_active_effect(new_state)
 
     @BaseSystem.action
     def set_target_current(self, value):

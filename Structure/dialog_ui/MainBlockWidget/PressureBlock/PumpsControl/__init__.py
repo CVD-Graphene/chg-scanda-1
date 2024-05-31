@@ -1,4 +1,4 @@
-from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import pyqtSignal, QTimer
 
 from coregraphene.conf import settings
 from PyQt5 import QtCore
@@ -30,8 +30,13 @@ class PumpInfoColumnWidget(InfoColumnWidget):
 
 
 class PumpsControlWidget(QWidget):
+    # Base pump
     update_pump_state_signal = pyqtSignal()
     on_update_pump_is_open_signal = pyqtSignal(bool)
+
+    # Pump TC110
+    update_pump_tc110_state_signal = pyqtSignal()
+    on_update_pump_tc110_is_open_signal = pyqtSignal(bool)
 
     update_pump_valve_state_signal = pyqtSignal()
     on_update_pump_valve_is_open_signal = pyqtSignal(bool)
@@ -39,8 +44,14 @@ class PumpsControlWidget(QWidget):
     update_throttle_state_signal = pyqtSignal()
     on_update_throttle_state_signal = pyqtSignal(bool)
 
+    confirmation_press_time_ms = 5000
+
     def __init__(self):
         super().__init__(parent=None)
+
+        self.pump_tc110_is_waiting = False
+        self.pump_tc110_state = PUMP_BUTTON_STATE.CLOSE
+        self.timer = QTimer(parent=None)
 
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
@@ -49,6 +60,7 @@ class PumpsControlWidget(QWidget):
         self.setAttribute(QtCore.Qt.WA_StyledBackground, True)
 
         self.pump_button = PumpButton()
+        self.pump_tc110_button = PumpButton()
 
         self.pump_valve_b = ButterflyButton()
         self.throttle_b = ButterflyButton()
@@ -74,12 +86,22 @@ class PumpsControlWidget(QWidget):
         self.bottom_layout.addWidget(
             self.pump_valve_b, alignment=QtCore.Qt.AlignRight | QtCore.Qt.AlignHCenter)
 
+        # PUMP TC110 #########################
+        self.pump_tc110_layout = QHBoxLayout()
+        self.pump_tc110_layout.addWidget(
+            self.pump_tc110_button, alignment=QtCore.Qt.AlignLeft | QtCore.Qt.AlignHCenter)
+        ######################################
+
         # self.layout.addStretch(2)
         self.layout.addLayout(self.back_pressure_valve_layout)
         self.layout.addLayout(self.bottom_layout)
+        self.layout.addLayout(self.pump_tc110_layout)
 
         self.on_update_pump_is_open_signal.connect(self._draw_pump_is_open)
         self.pump_button.clicked.connect(self._on_click_pump_button)
+
+        self.on_update_pump_tc110_is_open_signal.connect(self._draw_pump_tc110_is_open)
+        self.pump_tc110_button.clicked.connect(self._on_click_pump_tc110_button)
 
         self.on_update_pump_valve_is_open_signal.connect(self._draw_pump_valve_is_open)
         self.pump_valve_b.clicked.connect(self._on_click_pump_valve_butterfly)
@@ -89,6 +111,23 @@ class PumpsControlWidget(QWidget):
 
     def _on_click_pump_button(self):
         self.update_pump_state_signal.emit()
+
+    def _on_click_pump_tc110_button(self):  # update_pump_tc110_state_signal
+        if self.pump_tc110_is_waiting or self.pump_tc110_state == PUMP_BUTTON_STATE.OPEN:
+            self.pump_tc110_is_waiting = False
+            self.update_pump_tc110_state_signal.emit()
+        else:
+            self.pump_tc110_is_waiting = True
+            self.pump_tc110_button.update_state_signal.emit(PUMP_BUTTON_STATE.REGULATION)
+            self.timer.singleShot(
+                self.confirmation_press_time_ms,
+                self._clear_button_waiting
+            )
+
+    def _clear_button_waiting(self):
+        if not self.pump_tc110_is_waiting:
+            return
+        self._draw_pump_tc110_is_open(False)
 
     def _on_click_pump_valve_butterfly(self):
         self.update_pump_valve_state_signal.emit()
@@ -100,21 +139,14 @@ class PumpsControlWidget(QWidget):
         state = PUMP_BUTTON_STATE.OPEN if is_open else PUMP_BUTTON_STATE.CLOSE
         self.pump_button.update_state_signal.emit(state)
 
+    def _draw_pump_tc110_is_open(self, is_open: bool):
+        self.pump_tc110_is_waiting = False
+        self.pump_tc110_state = PUMP_BUTTON_STATE.OPEN if is_open else PUMP_BUTTON_STATE.CLOSE
+        self.pump_tc110_button.update_state_signal.emit(self.pump_tc110_state)
+
     def _draw_pump_valve_is_open(self, is_open: bool):
         state = BUTTERFLY_BUTTON_STATE.OPEN if is_open else BUTTERFLY_BUTTON_STATE.CLOSE
         self.pump_valve_b.update_state_signal.emit(state)
-
-    # def _draw_throttle_state(self, state: int):
-    #     valve_state = BUTTERFLY_BUTTON_STATE.INACTIVE
-    #     if state == BACK_PRESSURE_VALVE_STATE.WAITING:
-    #         valve_state = BUTTERFLY_BUTTON_STATE.INACTIVE
-    #     elif state == BACK_PRESSURE_VALVE_STATE.OPEN:
-    #         valve_state = BUTTERFLY_BUTTON_STATE.OPEN
-    #     elif state == BACK_PRESSURE_VALVE_STATE.CLOSE:
-    #         valve_state = BUTTERFLY_BUTTON_STATE.CLOSE
-    #     elif state == BACK_PRESSURE_VALVE_STATE.REGULATION:
-    #         valve_state = BUTTERFLY_BUTTON_STATE.REGULATION
-    #     self.throttle_b.update_state_signal.emit(valve_state)
 
     def _draw_throttle_state(self, is_open: bool):
         state = BUTTERFLY_BUTTON_STATE.OPEN if is_open else BUTTERFLY_BUTTON_STATE.CLOSE

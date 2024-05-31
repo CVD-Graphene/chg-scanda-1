@@ -29,6 +29,17 @@ class ChangePumpManageStateEffect(SystemEffect):
         return self._system.pump_manage_controller.set_is_open_state(is_open)
 
 
+class ChangePumpTC110ManageStateEffect(SystemEffect):
+    def _call_function(self, is_on):
+        if is_on:
+            if self._system.accurate_vakumetr_controller.vakumetr_value < 1e-2 or True:
+                return self._system.pump_tc110_controller.pump_turn_on()
+            else:
+                return False
+        else:
+            return self._system.pump_tc110_controller.pump_turn_off()
+
+
 # ======== RRG
 class SetTargetRrgSccmEffect(ManyDeviceSystemEffect):
     def _call_function(self, sccm, device_num):
