@@ -23,7 +23,7 @@ from .effects import (
     SetTargetTemperatureSystemEffect,
     SetIsTemperatureRegulationActiveEffect,
     SetTemperaturePidSpeedSystemEffect,
-    ChangeTmpPumpStateEffect, ChangePumpTC110ManageStateEffect,
+    ChangeTmpPumpStateEffect, ChangePumpTC110ManageStateEffect, SetTargetSpeedPumpTC110SystemEffect,
 )
 from coregraphene.components.controllers import (
     AbstractController,
@@ -276,6 +276,14 @@ class AppSystem(BaseSystem):
 
         # ===== PUMP TC110 ==== #
         self.change_pump_tc110_active_effect = ChangePumpTC110ManageStateEffect(system=self)
+        # --- Actual speed ------
+        self.pump_tc110_actual_speed_effect = SingleAnswerSystemEffect(system=self)
+        self.pump_tc110_controller.get_actual_speed_action. \
+            connect(self.pump_tc110_actual_speed_effect)
+        # --- Target speed ------
+        self.target_speed_pump_tc110_effect = SetTargetSpeedPumpTC110SystemEffect(system=self)
+
+        # self.pump_tc110_actual_speed_effect.connect(self._on_get_accurate_vakumetr_value)
 
         # ===== RRG =========== #
         self.set_target_rrg_sccm_effect = SetTargetRrgSccmEffect(system=self)

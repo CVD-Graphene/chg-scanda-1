@@ -1,4 +1,7 @@
+from coregraphene.conf import settings
 from coregraphene.system_effects import ManyDeviceSystemEffect, SystemEffect
+
+LOCAL_MODE = settings.LOCAL_MODE
 
 
 class ChangeAirValveStateEffect(SystemEffect):
@@ -32,12 +35,19 @@ class ChangePumpManageStateEffect(SystemEffect):
 class ChangePumpTC110ManageStateEffect(SystemEffect):
     def _call_function(self, is_on):
         if is_on:
-            if self._system.accurate_vakumetr_controller.vakumetr_value < 1e-2 or True:
+            if self._system.accurate_vakumetr_value < 1e-2 or LOCAL_MODE:
                 return self._system.pump_tc110_controller.pump_turn_on()
             else:
                 return False
         else:
             return self._system.pump_tc110_controller.pump_turn_off()
+
+
+# ======== PUMP TC110
+class SetTargetSpeedPumpTC110SystemEffect(SystemEffect):
+    def _call_function(self, value):
+        print(f'|> New PUMP-TC110 target speed: {value}')
+        return self._system.pump_tc110_controller.set_target_speed_percent(value)
 
 
 # ======== RRG
