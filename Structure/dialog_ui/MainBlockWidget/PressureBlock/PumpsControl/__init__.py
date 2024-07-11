@@ -175,6 +175,9 @@ class PumpsControlWidget(QWidget):
     update_pump_tc110_state_signal = pyqtSignal()
     on_update_pump_tc110_is_open_signal = pyqtSignal(bool)
 
+    update_tc110_b_state_signal = pyqtSignal()
+    on_update_tc110_b_state_signal = pyqtSignal(bool)
+
     # update_actual_speed_signal = pyqtSignal(float)
     update_target_speed_signal = pyqtSignal(int)
     on_update_target_speed_signal = pyqtSignal(int)
@@ -206,8 +209,13 @@ class PumpsControlWidget(QWidget):
 
         self.pump_button = PumpButton()
         self.pump_tc110_button = PumpButton()
+        self.tc110_butterfly = ButterflyButton()
+
         self.label_t_symbol = QLabel('T', parent=self.pump_tc110_button)
         self.label_t_symbol.setStyleSheet(styles.label_t)
+
+        self.label_t_symbol_b = QLabel('T', parent=self.tc110_butterfly)
+        self.label_t_symbol_b.setStyleSheet(styles.label_t)
 
         self.pump_valve_b = ButterflyButton()
         self.throttle_b = ButterflyButton()
@@ -237,6 +245,8 @@ class PumpsControlWidget(QWidget):
         self.pump_tc110_layout = QHBoxLayout()
         self.pump_tc110_layout.addWidget(
             self.pump_tc110_button, alignment=QtCore.Qt.AlignLeft | QtCore.Qt.AlignHCenter)
+        self.pump_tc110_layout.addWidget(
+            self.tc110_butterfly, alignment=QtCore.Qt.AlignLeft | QtCore.Qt.AlignHCenter)
         speed_info_layout = QVBoxLayout()
 
         self.target_speed_block = SetTargetSpeedBlock()
@@ -265,13 +275,16 @@ class PumpsControlWidget(QWidget):
         self.on_update_throttle_state_signal.connect(self._draw_throttle_state)
         self.throttle_b.clicked.connect(self._on_click_throttle_butterfly)
 
+        self.on_update_tc110_b_state_signal.connect(self._draw_tc110_b_state)
+        self.tc110_butterfly.clicked.connect(self._on_click_tc110_b_valve_butterfly)
+
     def _on_click_pump_button(self):
         self.update_pump_state_signal.emit()
 
     def _on_click_pump_tc110_button(self):  # update_pump_tc110_state_signal
         if self.pump_tc110_is_waiting or self.pump_tc110_state == PUMP_BUTTON_STATE.OPEN:
-            self.pump_tc110_is_waiting = False
             self.update_pump_tc110_state_signal.emit()
+            self.pump_tc110_is_waiting = False
         else:
             self.pump_tc110_is_waiting = True
             self.pump_tc110_button.update_state_signal.emit(PUMP_BUTTON_STATE.REGULATION)
@@ -287,6 +300,9 @@ class PumpsControlWidget(QWidget):
 
     def _on_click_pump_valve_butterfly(self):
         self.update_pump_valve_state_signal.emit()
+
+    def _on_click_tc110_b_valve_butterfly(self):
+        self.update_tc110_b_state_signal.emit()
 
     def _on_click_throttle_butterfly(self):
         self.update_throttle_state_signal.emit()
@@ -307,3 +323,7 @@ class PumpsControlWidget(QWidget):
     def _draw_throttle_state(self, is_open: bool):
         state = BUTTERFLY_BUTTON_STATE.OPEN if is_open else BUTTERFLY_BUTTON_STATE.CLOSE
         self.throttle_b.update_state_signal.emit(state)
+
+    def _draw_tc110_b_state(self, is_open: bool):
+        state = BUTTERFLY_BUTTON_STATE.OPEN if is_open else BUTTERFLY_BUTTON_STATE.CLOSE
+        self.tc110_butterfly.update_state_signal.emit(state)

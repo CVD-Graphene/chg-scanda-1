@@ -24,6 +24,7 @@ from .effects import (
     SetIsTemperatureRegulationActiveEffect,
     SetTemperaturePidSpeedSystemEffect,
     ChangeTmpPumpStateEffect, ChangePumpTC110ManageStateEffect, SetTargetSpeedPumpTC110SystemEffect,
+    ChangeTc110FuseStateEffect, SetAccurateVakumetrValueEffect,
 )
 from coregraphene.components.controllers import (
     AbstractController,
@@ -72,6 +73,7 @@ class AppSystem(BaseSystem):
         },
         'pump_tc110': {
             'port_communicator': settings.PUMP_TC110_COMMUNICATOR_PORT,
+            'baudrate': settings.PUMP_TC110_BAUDRATE,
         },
         'bh_rrg': {
             'baudrate': settings.BH_RRG_CONTROLLER_BAUDRATE,
@@ -177,6 +179,7 @@ class AppSystem(BaseSystem):
             port=self.pump_tc110_port,
             **self._default_controllers_kwargs.get('pump_tc110'),
         )
+        self.tc110_valve = ValveController(port=settings.TURBO_MOLECULAR_PUMP_TC110_VALVE_PORT)
 
         self.air_valve_controller = ValveController(
             port=settings.AIR_VALVE_CONFIGURATION['PORT'],
@@ -242,6 +245,7 @@ class AppSystem(BaseSystem):
             self.accurate_vakumetr_controller,
             self.air_valve_controller,
             self.pump_tc110_controller,
+            self.tc110_valve,
             self.pyrometer_temperature_controller,
             self.rrgs_controller,
             self.small_tmp_pump,
@@ -276,6 +280,7 @@ class AppSystem(BaseSystem):
 
         # ===== PUMP TC110 ==== #
         self.change_pump_tc110_active_effect = ChangePumpTC110ManageStateEffect(system=self)
+        self.change_tc110_fuse_opened = ChangeTc110FuseStateEffect(system=self)
         # --- Actual speed ------
         self.pump_tc110_actual_speed_effect = SingleAnswerSystemEffect(system=self)
         self.pump_tc110_controller.get_actual_speed_action. \
@@ -347,10 +352,11 @@ class AppSystem(BaseSystem):
         #     connect(self.throttle_target_open_percent_effect)
 
         # ===== Accurate vakumetr ===== #
-        self.accurate_vakumetr_effect = SingleAnswerSystemEffect(system=self)
+        # self.accurate_vakumetr_effect = SingleAnswerSystemEffect(system=self)
+        self.accurate_vakumetr_effect = SetAccurateVakumetrValueEffect(system=self)
         self.accurate_vakumetr_controller.actual_pressure_effect. \
             connect(self.accurate_vakumetr_effect)
-        self.accurate_vakumetr_effect.connect(self._on_get_accurate_vakumetr_value)
+        # self.accurate_vakumetr_effect.connect(self._on_get_accurate_vakumetr_value)
         # self.accurate_vakumetr_controller.get_current_pressure_effect. \
         #     connect(self.accurate_vakumetr_effect)
 
@@ -472,27 +478,38 @@ class AppSystem(BaseSystem):
         valve = self._valves.get(gas_num, None)
         if valve is None:
             return False
-        new_state = self._change_valve_state(valve, gas_num)
+        # new_state = self._change_valve_state(valve, gas_num)
+        new_state = not valve.is_open
         self.change_gas_valve_opened(new_state, device_num=gas_num)
 
     @BaseSystem.action
     def change_tmp_pump_state(self):
-        new_state = self.small_tmp_pump.change_state()
+        # new_state = self.small_tmp_pump.change_state()
+        new_state = not self.small_tmp_pump.is_open
         self.change_tmp_pump_opened(new_state)
 
     @BaseSystem.action
+    def change_tc110_fuse_state(self):
+        # new_state = self.tc110_valve.change_state()
+        new_state = not self.tc110_valve.is_open
+        self.change_tc110_fuse_opened(new_state)
+
+    @BaseSystem.action
     def change_air_valve_state(self):
-        new_state = self._change_valve_state(self.air_valve_controller, "AIR")
+        # new_state = self._change_valve_state(self.air_valve_controller, "AIR")
+        new_state = not self.air_valve_controller.is_open
         self.change_air_valve_opened(new_state)
 
     @BaseSystem.action
     def change_pump_valve_state(self):
-        new_state = self._change_valve_state(self.pump_valve_controller, "PUMP V")
+        # new_state = self._change_valve_state(self.pump_valve_controller, "PUMP V")
+        new_state = not self.pump_valve_controller.is_open
         self.change_pump_valve_opened_effect(new_state)
 
     @BaseSystem.action
     def change_pump_manage_state(self):
-        new_state = self._change_valve_state(self.pump_manage_controller, "PUMP M")
+        # new_state = self._change_valve_state(self.pump_manage_controller, "PUMP M")
+        new_state = not self.pump_manage_controller.is_open
         self.change_pump_manage_active_effect(new_state)
 
     @BaseSystem.action
@@ -515,6 +532,7 @@ class AppSystem(BaseSystem):
 
     def _on_get_accurate_vakumetr_value(self, value):
         self.accurate_vakumetr_value = value
+        return self.accurate_vakumetr_value
 
     def get_accurate_vakumetr_value(self):
         return self.accurate_vakumetr_value

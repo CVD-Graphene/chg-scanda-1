@@ -164,40 +164,6 @@ def start():
 
     app.exec()
 
-# from Core.actions import ACTIONS
-#
-# def start_system():
-#     system = CvdSystem(actions_list=ACTIONS)
-#     system.setup()
-#     system.threads_setup()
-#     try:
-#         while True:
-#             sleep(1)
-#     except BaseException:
-#         system.stop()
-#         system.destructor()
-
-# import threading
-#
-# a = 0
-# def x():
-#     global a
-#     for i in range(100000):
-#         a += 1
-#
-# threads = []
-#
-# for j in range(10):
-#     thread = threading.Thread(target=x)
-#     threads.append(thread)
-#     thread.start()
-#
-# for thread in threads:
-#     thread.join()
-#
-# print(a)
-# assert a == 1000000
-
 
 if __name__ == '__main__':
     # pass

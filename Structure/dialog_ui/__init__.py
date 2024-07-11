@@ -99,6 +99,11 @@ class AppMainDialogWindow(BaseMainDialogWindow):
             .connect(self.system.change_pump_tc110_manage_state)
         self.system.change_pump_tc110_active_effect.connect(
             self.milw.pressure_block.pump_block.on_update_pump_tc110_is_open_signal.emit)
+        # ------ TC110 pre-fuse
+        self.milw.pressure_block.pump_block.update_tc110_b_state_signal.connect(
+            self.system.change_tc110_fuse_state)
+        self.system.change_tc110_fuse_opened.connect(
+            self.milw.pressure_block.pump_block.on_update_tc110_b_state_signal.emit)
         # ------ Actual speed
         self.system.pump_tc110_actual_speed_effect.connect(
             self.milw.pressure_block.pump_block.target_speed_block.update_actual_speed_signal.emit

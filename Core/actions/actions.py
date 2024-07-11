@@ -483,7 +483,8 @@ class StabilizePressureAction(AppAction):
                     break
 
                 if MAX_RECIPE_STEP_SECONDS and (time.time() - self.start_time >= MAX_RECIPE_STEP_SECONDS):
-                    self.system.add_error_log(f"Стабилизация давления не завершилась до достижения максимального времени")
+                    self.system.add_error_log(
+                        f"Стабилизация давления не завершилась до достижения максимального времени")
                     raise NotAchievingActionGoal
 
             if success:
@@ -523,7 +524,8 @@ class WaitRaisePressureAction(AppAction):
                     break
 
                 if MAX_RECIPE_STEP_SECONDS and (time.time() - self.start_time >= MAX_RECIPE_STEP_SECONDS):
-                    self.system.add_error_log(f"Стабилизация давления не завершилась до достижения максимального времени")
+                    self.system.add_error_log(
+                        f"Стабилизация давления не завершилась до достижения максимального времени")
                     raise NotAchievingActionGoal
 
             if success:
@@ -562,11 +564,78 @@ class StabilizeTemperatureAction(AppAction):
                     break
 
                 if MAX_RECIPE_STEP_SECONDS and (time.time() - self.start_time >= MAX_RECIPE_STEP_SECONDS):
-                    self.system.add_error_log(f"Стабилизация давления не завершилась до достижения максимального времени")
+                    self.system.add_error_log(
+                        f"Стабилизация давления не завершилась до достижения максимального времени")
                     raise NotAchievingActionGoal
 
             if success:
                 break
+
+
+class SetTurboMolecularPumpTargetSpeedAction(AppAction):
+    name = TABLE_ACTIONS_NAMES.TURBO_MOLECULAR_PUMP_SET_TARGET_SPEED
+    key = ACTIONS_NAMES.TURBO_MOLECULAR_PUMP_SET_TARGET_SPEED
+    args_info = [IntKeyArgument]
+
+    def do_action(self, target_speed: int):
+        self.system.target_speed_pump_tc110_effect(target_speed)
+
+
+class TurnOnTurboMolecularPumpAction(AppAction):
+    name = TABLE_ACTIONS_NAMES.TURBO_MOLECULAR_PUMP_TURN_ON
+    key = ACTIONS_NAMES.TURBO_MOLECULAR_PUMP_TURN_ON
+    args_info = []
+
+    def do_action(self):
+        self.system.change_pump_tc110_active_effect(True)
+
+
+class TurnOffTurboMolecularPumpAction(AppAction):
+    name = TABLE_ACTIONS_NAMES.TURBO_MOLECULAR_PUMP_TURN_OFF
+    key = ACTIONS_NAMES.TURBO_MOLECULAR_PUMP_TURN_OFF
+    args_info = []
+
+    def do_action(self):
+        self.system.change_pump_tc110_active_effect(False)
+
+
+class OpenTurboMolecularPumpValveAction(AppAction):
+    name = TABLE_ACTIONS_NAMES.TURBO_MOLECULAR_PUMP_VALVE_OPEN
+    key = ACTIONS_NAMES.TURBO_MOLECULAR_PUMP_VALVE_OPEN
+    args_info = []
+
+    def do_action(self):
+        self.system.change_tc110_fuse_opened(True)
+
+
+class CloseTurboMolecularPumpValveAction(AppAction):
+    name = TABLE_ACTIONS_NAMES.TURBO_MOLECULAR_PUMP_VALVE_CLOSE
+    key = ACTIONS_NAMES.TURBO_MOLECULAR_PUMP_VALVE_CLOSE
+    args_info = []
+
+    def do_action(self):
+        self.system.change_tc110_fuse_opened(False)
+
+
+class WaitStopTurboMolecularPumpAction(AppAction):
+    name = TABLE_ACTIONS_NAMES.TURBO_MOLECULAR_PUMP_WAIT_STOP_WORKING
+    key = ACTIONS_NAMES.TURBO_MOLECULAR_PUMP_WAIT_STOP_WORKING
+    args_info = []
+
+    def do_action(self):
+
+        while True:
+            self.interrupt_if_stop_state()
+
+            time.sleep(0.5)
+
+            if not self.system.pump_tc110_controller.is_working:
+                break
+
+            if MAX_RECIPE_STEP_SECONDS and (time.time() - self.start_time >= MAX_RECIPE_STEP_SECONDS):
+                self.system.add_error_log(
+                    f"Ожидание остановки тубрика не завершилось до достижения максимального времени")
+                raise NotAchievingActionGoal
 
 
 ACTIONS = [
@@ -595,4 +664,10 @@ ACTIONS = [
     WaitRaisePressureAction(),
 
     RampAction(),
+    SetTurboMolecularPumpTargetSpeedAction(),
+    TurnOnTurboMolecularPumpAction(),
+    TurnOffTurboMolecularPumpAction(),
+    OpenTurboMolecularPumpValveAction(),
+    CloseTurboMolecularPumpValveAction(),
+    WaitStopTurboMolecularPumpAction(),
 ]
