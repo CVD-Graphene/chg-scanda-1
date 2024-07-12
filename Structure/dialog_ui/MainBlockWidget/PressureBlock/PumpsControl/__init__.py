@@ -294,7 +294,7 @@ class PumpsControlWidget(QWidget):
             )
 
     def _clear_button_waiting(self):
-        if not self.pump_tc110_is_waiting:
+        if self.pump_tc110_state == PUMP_BUTTON_STATE.OPEN:
             return
         self._draw_pump_tc110_is_open(False)
 
