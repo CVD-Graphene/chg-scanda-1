@@ -112,7 +112,7 @@ class SetAccurateVakumetrValueEffect(SystemEffect):
     def _call_function(self, value, **kwargs):  # Here with device_num :(
         # print(kwargs)
         self._system.accurate_vakumetr_value = value
-        # если давление в камере большое, то проверяем на состояние тубрик и клапан
+        # если давление в камере большое, то проверяем на состояние турбик и клапан
         if self._system.accurate_vakumetr_value >= settings.TURBO_MOLECULAR_PUMP_CRITICAL_PRESSURE and (True or not LOCAL_MODE):
             bad_config = False
             if self._system.tc110_valve.is_open:

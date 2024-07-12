@@ -634,7 +634,7 @@ class WaitStopTurboMolecularPumpAction(AppAction):
 
             if MAX_RECIPE_STEP_SECONDS and (time.time() - self.start_time >= MAX_RECIPE_STEP_SECONDS):
                 self.system.add_error_log(
-                    f"Ожидание остановки тубрика не завершилось до достижения максимального времени")
+                    f"Ожидание остановки турбика не завершилось до достижения максимального времени")
                 raise NotAchievingActionGoal
 
 
